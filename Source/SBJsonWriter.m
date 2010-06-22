@@ -102,8 +102,13 @@ static NSMutableCharacterSet *kEscapeChars;
     } else if ([fragment isKindOfClass:[NSNumber class]]) {
         if ('c' == *[fragment objCType])
             [json appendString:[fragment boolValue] ? @"true" : @"false"];
-        else
-            [json appendString:[fragment stringValue]];
+        else {
+          float fragmentFloat = [fragment floatValue];
+          if (isnan(fragmentFloat) || isinf(fragmentFloat))
+              [json appendString:@"null"];
+          else
+              [json appendString:[fragment stringValue]];
+        }  
         
     } else if ([fragment isKindOfClass:[NSNull class]]) {
         [json appendString:@"null"];
